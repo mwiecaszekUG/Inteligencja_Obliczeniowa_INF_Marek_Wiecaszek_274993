@@ -16,9 +16,7 @@ def prime(n, i=2):
            return prime(n, i+1)
 
 
-print(prime(7))
-print(prime(14))
-print(prime(13))
+print("Test prime dla 7, 14 i 13:", prime(7), prime(14), prime(13))
 
 
 def select_primes(x):
@@ -29,7 +27,7 @@ def select_primes(x):
     return result
 
 
-print(select_primes([2,3,7,8,9,13,25,29]))
+print("Test select_primes dla [2,3,7,8,9,13,25,29]", select_primes([2,3,7,8,9,13,25,29]))
 
 # Zad. 2
 
@@ -50,7 +48,7 @@ skalar = 0
 for i in range(len(vector_one)):
     skalar += vector_one[i] * vector_two[i]
 
-print(skalar)
+print("Iloczyn skalarny:", skalar)
 
 
 def vector_len(v):
@@ -59,7 +57,7 @@ def vector_len(v):
         result += j**2
     return math.sqrt(result)
 
-
+print("Długośc wektorów")
 print(vector_len(vector_one))
 print(vector_len(vector_two))
 
@@ -80,7 +78,7 @@ for ranint in vector_random:
 print("Max:", max, "Min:", min)
 
 deriviate = statistics.stdev(vector_random)
-print(deriviate)
+print("Deriviate", deriviate)
 
 
 def normilize(vector):
@@ -91,7 +89,7 @@ def normilize(vector):
 
 
 normilized_vector = normilize(vector_random)
-print(normilized_vector)
+print("Normalizacja", normilized_vector)
 
 index_of_max = 0
 for i in range(len(vector_random)):
@@ -110,7 +108,7 @@ def standardize(vector):
 
 
 standarized_vector = standardize(vector_random)
-print(standarized_vector)
+print("Standaryzacja", standarized_vector)
 
 print("Nowe odchylenie:", statistics.stdev(standarized_vector), "Nowa średia:", statistics.mean(standarized_vector))
 
@@ -128,10 +126,10 @@ def dyskretyzacja(vector):
 
 descretisized_vector = dyskretyzacja(vector_random)
 
-print(descretisized_vector)
+print("Dyskretyzacja", descretisized_vector)
 
 # Zad. 3
 
-# miasta = pandas.read_csv("miasta.csv")
-#
-# print(miasta)
+miasta = pandas.read_csv("miasta.csv")
+
+print(miasta)
