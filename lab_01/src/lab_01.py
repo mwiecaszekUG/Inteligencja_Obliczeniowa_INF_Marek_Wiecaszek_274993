@@ -2,18 +2,19 @@ import math
 import random
 import statistics
 import pandas
+import matplotlib.pyplot as plt
 
 
 def prime(n, i=2):
-    if n < 2:
-        return False
     if n == i:
         return True
-    else:
+    if n > 2:
         if n % i == 0:
             return False
         else:
-           return prime(n, i+1)
+            return prime(n, i + 1)
+    else:
+        return False
 
 
 print("Test prime dla 7, 14 i 13:", prime(7), prime(14), prime(13))
@@ -132,4 +133,26 @@ print("Dyskretyzacja", descretisized_vector)
 
 miasta = pandas.read_csv("miasta.csv")
 
-print(miasta)
+print("Dane tabela:", miasta.values)
+
+
+data_to_add = pandas.DataFrame({
+    "Rok": 2010,
+    "Gdansk": 460,
+    "Poznan": 555,
+    "Szczecin": 405
+}, index=[len(miasta)])
+
+miasta = miasta.append(data_to_add, ignore_index=True)
+
+plt.plot(miasta["Rok"], miasta["Gdansk"], color='red', linewidth=2, marker='o')
+plt.xlabel("Rok")
+plt.ylabel("Gdansk mieszkancy")
+plt.show()
+
+plt.plot(miasta["Rok"], miasta["Gdansk"], color='red', linewidth=2, marker='o', label='Gdansk')
+plt.plot(miasta["Rok"], miasta["Szczecin"], color='green', linewidth=2, marker='o', label='Szczecin')
+plt.plot(miasta["Rok"], miasta["Poznan"], color='blue', linewidth=2, marker='o', label='Poznan')
+plt.legend()
+plt.show()
+
