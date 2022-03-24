@@ -1,6 +1,8 @@
 import pygad
 import numpy
 import time
+import math
+
 
 Lab = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
@@ -15,10 +17,35 @@ Lab = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-#Oceniamy odległość od wyjścia !!!!!!!
-#Wykonuje po kolei ruchy z solution
-#Na końcu jesteśmy we współrzędnych (x, y)
-#Zwróć odległość od końca np. -(|x - x.end| + |y - y.end|)
+
+#funkcja czyszcząca wynik z niepotrzebnych ruchów
+def result_cleanup(solution):
+    result = []
+    pos = (1, 1)
+    for i in range(len(solution)):
+        if solution[i] == 0:
+            if Lab[pos[0]][pos[1] + 1] == 0:
+                pos = (pos[0], pos[1] + 1)
+                result.append("prawo")
+        if solution[i] == 1:
+            if Lab[pos[0]][pos[1] - 1] == 0:
+                pos = (pos[0], pos[1] - 1)
+                result.append("lewo")
+        if solution[i] == 2:
+            if Lab[pos[0] - 1][pos[1]] == 0:
+                pos = (pos[0] - 1, pos[1])
+                result.append("góra")
+        if solution[i] == 3:
+            if Lab[pos[0] + 1][pos[1]] == 0:
+                pos = (pos[0] + 1, pos[1])
+                result.append("dół")
+        if pos == (10, 10):
+            fitness = 0
+            print("Ilość ruchów: ", len(result))
+            print("Wynik: ", result)
+            return fitness
+
+
 
 gene_space = [0, 1, 2, 3]
 desired_fitness = 0
@@ -29,49 +56,93 @@ desired_fitness = 0
 #nr.2 odbicie, ignorujemy wejście w ścianę, ruch pomijamy i bierzemy kolejny
 #ruchy zostaną wykorzystane do końca i zwracamy miejsce zatrzymania
 # rozwiązanie będzie miało brudne rucchy "w ścienę" mozna naprawic post proccesingiem
+#Oceniamy odległość od wyjścia !!!!!!!
+#Wykonuje po kolei ruchy z solution
+#Na końcu jesteśmy we współrzędnych (x, y)
+#Zwróć odległość od końca np. -(|x - x.end| + |y - y.end|)
+
+# 0=prawo 1=lewo 2=góra 3=dół
+
+#Wersja pobłażliwa (z reguły znajduję rozwiązanie w 500 generacjach)
+#dodatkowo rozwiązania mają w sobie dużo niepotrzebnych ruchów (wchodzenie w ściany),
+#ale stosunkowo mało "chodzeniaw miejscu"
+
+
 def fitness_func(solution, solution_idx):
     pos = (1, 1)
     end_pos = (10, 10)
-    for gene in solution:
-        if gene == 0:
-            "prawo"
-        if gene == 1:
-            "lewo"
-        if gene == 2:
-            "góra"
-        if gene == 3:
-            "dół"
+    for i in range(len(solution)):
+        if solution[i] == 0:
+            if Lab[pos[0]][pos[1]+1] == 0:
+                pos = (pos[0], pos[1] + 1)
+        if solution[i] == 1:
+            if Lab[pos[0]][pos[1]-1] == 0:
+                pos = (pos[0], pos[1] - 1)
+        if solution[i] == 2:
+            if Lab[pos[0]-1][pos[1]] == 0:
+                pos = (pos[0]-1, pos[1])
+        if solution[i] == 3:
+            if Lab[pos[0]+1][pos[1]] == 0:
+                pos = (pos[0]+1, pos[1])
+        if pos == end_pos:
+            return result_cleanup(solution)
+    fitness = -(math.fabs(pos[0] - end_pos[0]) + math.fabs(pos[1] - end_pos[1]))
     return fitness
+
+
+#Wersja rygorystyczna (kary za wchodzenie w ścianę)
+#Rozwiązania dalej zawierają wejścia w ścianę dodatkowo pojawija się chodzenie w kółko,
+#Dodatkowo znalezienie rozwiązania wymaga zdecydowanie większej ilości pokoloń niż rozwiązanie pobłażliwe
+#Pierwsze znalezione rozwiązanie tym sposobem oceny nastąpiło po 23462 generacji i zajęło 16 sekund
+
+# def fitness_func(solution, solution_idx):
+#     pos = (1, 1)
+#     end_pos = (10, 10)
+#     colisions = 0
+#     for i in range(len(solution)):
+#         if solution[i] == 0:
+#             if Lab[pos[0]][pos[1]+1] == 0:
+#                 pos = (pos[0], pos[1] + 1)
+#             else:
+#                 colisions += 1
+#         if solution[i] == 1:
+#             if Lab[pos[0]][pos[1]-1] == 0:
+#                 pos = (pos[0], pos[1] - 1)
+#             else:
+#                 colisions += 1
+#         if solution[i] == 2:
+#             if Lab[pos[0]-1][pos[1]] == 0:
+#                 pos = (pos[0]-1, pos[1])
+#             else:
+#                 colisions += 1
+#         if solution[i] == 3:
+#             if Lab[pos[0]+1][pos[1]] == 0:
+#                 pos = (pos[0]+1, pos[1])
+#             else:
+#                 colisions += 1
+#         if pos == end_pos:
+#             return result_cleanup(solution)
+#     fitness = -(math.fabs(pos[0] - end_pos[0]) + math.fabs(pos[1] - end_pos[1]))*((colisions+1)**2)
+#     return fitness
 
 
 fitness_function = fitness_func
 
-#ile chromsomĂłw w populacji
-#ile genow ma chromosom
 sol_per_pop = 10
 num_genes = 30
 
-#ile wylaniamy rodzicow do "rozmanazania" (okolo 50% populacji)
-#ile pokolen
-#ilu rodzicow zachowac (kilka procent)
 num_parents_mating = 5
-num_generations = 30
+# num_generations = 500
+# wymagane dla algorytmu rygorystycznego
+num_generations = 100000
 keep_parents = 2
 
-#jaki typ selekcji rodzicow?
-#sss = steady, rws=roulette, rank = rankingowa, tournament = turniejowa
 parent_selection_type = "sss"
 
-#w il =u punktach robic krzyzowanie?
 crossover_type = "single_point"
 
-#mutacja ma dzialac na ilu procent genow?
-#trzeba pamietac ile genow ma chromosom
 mutation_type = "random"
-mutation_percent_genes = 5
-
-#inicjacja algorytmu z powyzszymi parametrami wpisanymi w atrybuty
-
+mutation_percent_genes = 7
 
 ga_instance = pygad.GA(gene_space=gene_space,
                            num_generations=num_generations,
@@ -85,7 +156,17 @@ ga_instance = pygad.GA(gene_space=gene_space,
                            crossover_type=crossover_type,
                            mutation_type=mutation_type,
                            mutation_percent_genes=mutation_percent_genes)
+
+print("Ostateczny wynik został pozbawiony ruchów w ściany")
+start = time.time()
 ga_instance.run()
+stop = time.time()
+print("czas operacji: ", stop-start)
+print("ilość generacji: ", ga_instance.generations_completed)
+print("ocena wyniku: ", ga_instance.best_solutions_fitness[-1])
+
+
+
 
 
 
