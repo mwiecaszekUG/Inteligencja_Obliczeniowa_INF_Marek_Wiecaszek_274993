@@ -27,9 +27,8 @@ class City:
 
     def find_connection_with(self, other_city):
         for con in self.connections:
-            if con.connects[0] == self.name and con.connects[1] == other_city.name or\
-                    con.connects[1] == self.name and con.connects[0]:
-                print(con)
+            if con.connects[0] == self and con.connects[1] == other_city or\
+                    con.connects[1] == self and con.connects[0] == other_city:
                 return con
 
 
@@ -105,9 +104,13 @@ number_of_cities = int(input('Number of cities to test = '))
 cities_1, routes_1 = make_map()
 
 # shows all connections
-# for r in routes_1:
-#     r.show_route()
+for r in routes_1:
+    r.show_route()
 
+aaa = []
+for c in cities_1:
+    aaa.append(c.name)
+print(aaa)
 # shows indexes of cities connected with the city
 # print(cities_1[0].connected_with_indexes(cities_1))
 
@@ -119,49 +122,46 @@ def fitness_func(solution, solution_idx):
     cities_visited = [starting_point]
     previous_city = cities_1[starting_point]
     fitness = 0
-
     for move in solution:
-        if fitness == 0:
-            legal_moves = previous_city.connected_with_indexes(cities_1)
-        else:
-            legal_moves = cities_1[int(move)].connected_with_indexes(cities_1)
-        if move in legal_moves:
+        legal_moves = previous_city.connected_with_indexes(cities_1)
+        if int(move) in legal_moves:
             con = cities_1[int(move)].find_connection_with(previous_city)
             fitness += con.cost
             previous_city = cities_1[int(move)]
             if int(move) not in cities_visited:
+                # print("dodaje miasto nr", len(cities_visited))
                 cities_visited.append(int(move))
         else:
-            fitness += 5000
+            fitness += 1000
 
     if len(cities_visited) == number_of_cities:
         fitness = fitness / 3
-    return fitness
+
+    return -int(fitness)
 
 
 fitness_function = fitness_func
 
 gene_space = list(range(0, number_of_cities))
 
-sol_per_pop = 20
-num_genes = number_of_cities * 2
+sol_per_pop = 1000
+num_genes = number_of_cities * 3
 
-num_parents_mating = 10
-num_generations = 500
-keep_parents = 4
+num_parents_mating = 400
+num_generations = 100
+keep_parents = 200
 
 parent_selection_type = "sss"
 
 crossover_type = "single_point"
 
 mutation_type = "random"
-mutation_percent_genes = 100/number_of_cities + 2
+mutation_percent_genes = 20
 
 ga_instance = pygad.GA(gene_space=gene_space,
                        num_generations=num_generations,
                        num_parents_mating=num_parents_mating,
                        fitness_func=fitness_function,
-                       stop_criteria=["reach_0"],
                        sol_per_pop=sol_per_pop,
                        num_genes=num_genes,
                        parent_selection_type=parent_selection_type,
@@ -172,5 +172,10 @@ ga_instance = pygad.GA(gene_space=gene_space,
 
 ga_instance.run()
 
-print(ga_instance.best_solutions_fitness[-1])
+
+solution, solution_fitness, solution_idx = ga_instance.best_solution()
+print(solution)
 ga_instance.plot_fitness()
+
+
+# napisz funkcje clean_up(result)
