@@ -25,6 +25,13 @@ class City:
                 result.append(l.index(con.connects[1]))
         return result
 
+    def find_connection_with(self, other_city):
+        for con in self.connections:
+            if con.connects[0] == self.name and con.connects[1] == other_city.name or\
+                    con.connects[1] == self.name and con.connects[0]:
+                print(con)
+                return con
+
 
 class Route:
     def __init__(self, name, cost, connects):
@@ -93,10 +100,6 @@ def make_map():
     return c, r
 
 
-def fitness_func(solution, solution_idx):
-    return 1
-
-
 number_of_cities = int(input('Number of cities to test = '))
 
 cities_1, routes_1 = make_map()
@@ -107,6 +110,34 @@ cities_1, routes_1 = make_map()
 
 # shows indexes of cities connected with the city
 # print(cities_1[0].connected_with_indexes(cities_1))
+
+starting_point = 0
+
+
+def fitness_func(solution, solution_idx):
+
+    cities_visited = [starting_point]
+    previous_city = cities_1[starting_point]
+    fitness = 0
+
+    for move in solution:
+        if fitness == 0:
+            legal_moves = previous_city.connected_with_indexes(cities_1)
+        else:
+            legal_moves = cities_1[int(move)].connected_with_indexes(cities_1)
+        if move in legal_moves:
+            con = cities_1[int(move)].find_connection_with(previous_city)
+            fitness += con.cost
+            previous_city = cities_1[int(move)]
+            if int(move) not in cities_visited:
+                cities_visited.append(int(move))
+        else:
+            fitness += 5000
+
+    if len(cities_visited) == number_of_cities:
+        fitness = fitness / 3
+    return fitness
+
 
 fitness_function = fitness_func
 
