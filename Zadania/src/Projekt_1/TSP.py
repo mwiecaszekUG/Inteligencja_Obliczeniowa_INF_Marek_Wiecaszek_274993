@@ -206,11 +206,11 @@ fitness_function = fitness_func_big
 
 gene_space = list(range(0, number_of_cities))
 
-sol_per_pop = 1000
-num_genes = number_of_cities * 2
+sol_per_pop = 500
+num_genes = number_of_cities * 5
 
 num_parents_mating = 150
-num_generations = 5000
+num_generations = 100
 keep_parents = 100
 
 parent_selection_type = "sss"
