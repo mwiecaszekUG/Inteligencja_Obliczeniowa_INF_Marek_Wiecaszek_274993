@@ -25,7 +25,7 @@ x_min = np.zeros(6)
 my_bounds = (x_min, x_max)
 
 options = {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
-optimizer = ps.single.GlobalBestPSO(n_particles=10, dimensions=6,
+optimizer = ps.single.GlobalBestPSO(n_particles=1000, dimensions=6,
                                     options=options, bounds=my_bounds)
 optimizer.optimize(optimize_func, iters=1000)
 cost_history = optimizer.cost_history

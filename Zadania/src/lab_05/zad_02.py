@@ -16,6 +16,7 @@ def fitness_func(solution):
 
 
 def optimize_func(swarm_entities):
+
     n_particles = swarm_entities.shape[0]
     j = [fitness_func(swarm_entities[i]) for i in range(n_particles)]
     return numpy.array(j)
