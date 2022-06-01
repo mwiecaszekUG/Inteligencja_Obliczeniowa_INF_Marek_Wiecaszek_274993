@@ -50,5 +50,13 @@ fd = nltk.FreqDist(words)
 
 print(fd.tabulate(10))
 
+from wordcloud import WordCloud
+
+wordcloud = WordCloud(max_font_size=25, max_words=50, background_color="white").generate(' '.join(list(words)))
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
 
 
