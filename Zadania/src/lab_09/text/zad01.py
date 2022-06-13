@@ -18,7 +18,7 @@ print("Ilość słów: ", len(tokenized_word))
 
 stop_words = list(nltk.corpus.stopwords.words('english'))
 inter = [".", ",", "!", "?", "-", "_", "...", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "-", "/", "[", "]",
-         "{", "}", "`", "'", "\"", "``", "''", "c't", "ca", "'s", "'re", "we", "He", 'he', "She", "she", "The", "the"]
+         "{", "}", "`", "'", "\"", "``", "''", "c't", "n't", "ca", "'s", "'re", "we", "He", 'he', "She", "she", "The", "the"]
 
 for s in inter:
     stop_words.append(s)
@@ -52,7 +52,7 @@ print(fd.tabulate(10))
 
 from wordcloud import WordCloud
 
-wordcloud = WordCloud(max_font_size=25, max_words=50, background_color="white").generate(' '.join(list(words)))
+wordcloud = WordCloud(max_font_size=40, max_words=30, background_color="white").generate(' '.join(list(words)))
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
